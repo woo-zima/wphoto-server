@@ -5,6 +5,7 @@ import PhotoController from './controllers/photo';
 import CommentController from './controllers/comment'
 import UserController from './controllers/user';
 import getToken from './api/qiniu'
+import captchaController from './controllers/captcha';
 
 const unprotectedRouter = new Router();
 
@@ -18,6 +19,9 @@ unprotectedRouter.get('/photo/getKeyWorlds',PhotoController.getKeyWorlds);
 unprotectedRouter.get('/photo/showPhotoDetail',PhotoController.showPhotoDetail);
 unprotectedRouter.get('/comment/getPhotoComment',CommentController.getPhotoComment);
 unprotectedRouter.post('/comment/addComment',CommentController.addCommentById);
+
+//captcha
+unprotectedRouter.get('/getCaptcha/:id',captchaController.getCaptcha);
 
 const protectedRouter = new Router();
 

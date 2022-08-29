@@ -6,9 +6,11 @@ import jwt from 'jsonwebtoken';
 import { User } from '../entity/user';
 import { JWT_SECRET } from '../constants';
 import { UnauthorizedException } from '../exceptions';
+const koaSession:any = require('koa-session');
 
 export default class AuthController {
   public static async login(ctx: Context) {
+    const {  imgcode = '' } = ctx.request.body;
     const userRepository = getManager().getRepository(User);
 
     const user = await userRepository
@@ -17,18 +19,28 @@ export default class AuthController {
       .addSelect('User.password')
       .getOne();
 
-    if (!user) {
-      throw new UnauthorizedException('用户名不存在');
-    } else if (await argon2.verify(user.password, ctx.request.body.password)) {
-      Reflect.deleteProperty(user,'password')
-      ctx.status = 200;
-      ctx.body = { 
-        token: jwt.sign({ id: user.uid }, JWT_SECRET),
-        userInfo:user
-      };
-    } else {
-      throw new UnauthorizedException('密码错误');
+    if(imgcode !== ''){
+      if(imgcode.toLowerCase() === koaSession.captchaCode){
+        if (!user) {
+          throw new UnauthorizedException('用户名不存在');
+        } else if (await argon2.verify(user.password, ctx.request.body.password)) {
+          Reflect.deleteProperty(user,'password')
+          ctx.status = 200;
+          ctx.body = { 
+            token: jwt.sign({ id: user.uid }, JWT_SECRET),
+            userInfo:user
+          };
+        } else {
+          throw new UnauthorizedException('密码错误');
+        }
+      }
+      else{
+        ctx.body = { msg: '验证码错误' }
+      }
     }
+    else{
+      ctx.body = { msg: '请输入验证码' }
+    } 
   }
 
   public static async register(ctx: Context) {

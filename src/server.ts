@@ -4,6 +4,9 @@ import bodyParser from 'koa-body';
 import { createConnection } from 'typeorm';
 import jwt from 'koa-jwt';
 import 'reflect-metadata';
+import svgCapTcha from 'svg-captcha';
+import session from 'koa-session';
+
 
 import { protectedRouter, unprotectedRouter } from './routes';
 import { logger } from './logger';
@@ -13,7 +16,17 @@ createConnection()
   .then(() => {
     // 初始化 Koa 应用实例
     const app = new Koa();
-
+    //设置session
+    app.keys = ['wphot'];
+    const config = {
+    key: "koa.photo",
+    //有效期
+    maxAge: 1000 * 60 * 20,
+    //刷新之后刷新 maxAge
+    rolling: true,
+    renew: true
+    }
+    app.use(session(config, app))
     // 注册中间件
     app.use(logger());
     app.use(cors());
