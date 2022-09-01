@@ -16,6 +16,8 @@ unprotectedRouter.post('/photo/getPhotoList',PhotoController.listPhotos);
 unprotectedRouter.post('/photo/addPhoto',PhotoController.addPhoto);
 unprotectedRouter.get('/getToken',getToken);
 unprotectedRouter.get('/photo/getKeyWorlds',PhotoController.getKeyWorlds);
+unprotectedRouter.get('/photo/getKeyPhotos',PhotoController.getKeyPhotos);
+
 unprotectedRouter.get('/photo/showPhotoDetail',PhotoController.showPhotoDetail);
 unprotectedRouter.get('/comment/getPhotoComment',CommentController.getPhotoComment);
 unprotectedRouter.post('/comment/addComment',CommentController.addCommentById);

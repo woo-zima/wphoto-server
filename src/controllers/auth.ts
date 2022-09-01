@@ -10,7 +10,7 @@ const koaSession:any = require('koa-session');
 
 export default class AuthController {
   public static async login(ctx: Context) {
-    const {  imgcode = '' } = ctx.request.body;
+    const {  verifyCode = '' } = ctx.request.body;
     const userRepository = getManager().getRepository(User);
 
     const user = await userRepository
@@ -19,8 +19,8 @@ export default class AuthController {
       .addSelect('User.password')
       .getOne();
 
-    if(imgcode !== ''){
-      if(imgcode.toLowerCase() === koaSession.captchaCode){
+    if(verifyCode !== ''){
+      if(verifyCode.toLowerCase() === koaSession.captchaCode){
         if (!user) {
           throw new UnauthorizedException('用户名不存在');
         } else if (await argon2.verify(user.password, ctx.request.body.password)) {
@@ -28,7 +28,8 @@ export default class AuthController {
           ctx.status = 200;
           ctx.body = { 
             token: jwt.sign({ id: user.uid }, JWT_SECRET),
-            userInfo:user
+            userInfo:user,
+            msg:'登录成功'
           };
         } else {
           throw new UnauthorizedException('密码错误');
@@ -44,25 +45,33 @@ export default class AuthController {
   }
 
   public static async register(ctx: Context) {
+    const {  verifyCode = '' } = ctx.request.body;
     const userRepository = getManager().getRepository(User);
 
-    const newUser = new User();
-    newUser.uname = ctx.request.body.name;
-    newUser.email = ctx.request.body.email;
-    newUser.password = await argon2.hash(ctx.request.body.password);
-    newUser.phonenumber = ctx.request.body.phonenumber;
-    newUser.createtime = new Date()
+    if(verifyCode !== ''){
+      if(verifyCode.toLowerCase() === koaSession.captchaCode){
+        const newUser = new User();
+        newUser.uname = ctx.request.body.username;
+        newUser.password = await argon2.hash(ctx.request.body.password);
+        newUser.createtime = new Date()
+        const user = await userRepository.save(newUser);
+        // 保存到数据库
+        if(user){
+          ctx.status = 200;
+          ctx.body = {
+            userInfo:user,
+            msg:'注册成功,请登录'
+          };
+        }else{
+          ctx.status = 500;
+          ctx.body = '服务器错误';
+        }
+      }else{
+        ctx.body = { msg: '验证码错误' }
+      }
+    } else{
+      ctx.body = { msg: '请输入验证码' }
+    } 
 
-    // 保存到数据库
-    const user = await userRepository.save(newUser);
-    if(user){
-      ctx.status = 201;
-    ctx.body = user;
-    }
-    else{
-      ctx.status = 500;
-    ctx.body = '服务器错误';
-    }
-    
   }
 }

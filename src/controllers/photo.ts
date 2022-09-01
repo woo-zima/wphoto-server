@@ -78,7 +78,7 @@ export default class PhotoController {
   .createQueryBuilder("photo")
   .select(["photo.pdescribe"])
   .where('photo.pdescribe LIKE "'+queryvalue+'%"')
-  .getMany();
+  .getOne()
 
     if (photoKey) {
       ctx.status = 200;
@@ -88,17 +88,23 @@ export default class PhotoController {
     }
   }
 
-//   public static async deleteUser(ctx: Context) {
-//     const userId = +ctx.params.id;
+  public static async getKeyPhotos(ctx: Context) {
+    const selectvalue = ctx.query.queryValue;
+    console.log(selectvalue  );
+    
+    const photoK = await getRepository(Photo)
+  .createQueryBuilder("photo")
+  .select(["photo"])
+  .where('photo.pdescribe LIKE "'+selectvalue+'%"')
+  .getMany()
 
-//     if (userId !== +ctx.state.user.id) {
-//       throw new ForbiddenException();
-//     }
+    if (photoK) {
+      ctx.status = 200;
+      ctx.body = photoK;
+    } else {
+      ctx.status = 404;
+    }
+  }
 
-//     const userRepository = getManager().getRepository(Photo);
-//     await userRepository.delete(userId);
 
-//     ctx.status = 204;
-//     ctx.body = '删除成功'
-//   }
 }

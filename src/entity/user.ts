@@ -9,13 +9,17 @@ export class User {
   @Column()
   uname: string;
 
-  @Column()
+  @Column({
+    nullable:true 
+  })
   phonenumber: string;
 
   @Column({ select: false })
   password: string;
 
-  @Column()
+  @Column({
+    nullable:true 
+  })
   email: string;
 
   @Column({
