@@ -105,6 +105,23 @@ export default class PhotoController {
       ctx.status = 404;
     }
   }
+  
+  public static async getUpPhotos(ctx: Context) {
+    const selectvalue = ctx.query.upid;
+    console.log("selectvalue" ,selectvalue );
+    
+    const photoK = await getRepository(Photo)
+  .createQueryBuilder("photo")
+  .select(["photo"])
+  .where('photo.upid = :upid',{upid:selectvalue})
+  .getMany()
 
+    if (photoK) {
+      ctx.status = 200;
+      ctx.body = photoK;
+    } else {
+      ctx.status = 404;
+    }
+  }
 
 }
