@@ -1,15 +1,15 @@
 import { Context } from 'koa'
 import { User } from '../entity/user';
-import { getConnection } from 'typeorm';
+import {getRepository, getConnection } from 'typeorm';
 
 import { Follow } from '../entity/follow';
 import { NotFoundException } from '../exceptions';
 
 export default class FollowController {
+  //获取关注信息
   public static async getFollowRelation(ctx: Context) {
     const followObj = await getConnection().createQueryBuilder(Follow,"follow")
-    .leftJoinAndMapOne("follow.uid",User, "user", "user.uid = follow.uid")
-    .leftJoinAndMapOne  ("follow.followuid",User,"u","u.uid = follow.followuid")
+    .leftJoinAndMapOne("follow.followuid",User,"u","u.uid = follow.followuid")
     .where("follow.uid = :id", { id: +ctx.query.uid })
     .getMany();
     if(followObj){
@@ -21,32 +21,60 @@ export default class FollowController {
     }
 
   }
+   //获取粉丝信息
+  public static async getFansRelation(ctx: Context) {
+    const followObj = await getConnection().createQueryBuilder(Follow,"follow")
+    .leftJoinAndMapOne  ("follow.uid",User,"u","u.uid = follow.uid")
+    .where("follow.followuid = :id", { id: +ctx.query.uid })
+    .getMany();
+    if(followObj){
+      ctx.status = 200; 
+      ctx.body = followObj;
+    }
+    else {
+      throw new NotFoundException();
+    }
+
+  }
+  //增加关注
   public static async addFollowRelation(ctx: Context) {
     console.log(ctx.request.body);
 
-    
-    const commentObj = new Follow();
-    const { uid,pid,content} = ctx.request.body;
+    const followObj = new Follow();
+    const { uid,followuid} = ctx.request.body;
 
-    const commentFlag = await getConnection().createQueryBuilder(Follow,"comment")
-    .leftJoinAndMapOne("comment.user",User, "user", "user.uid = comment.uid")
-    .leftJoinAndMapOne  ("comment.photo",Follow,"photo","photo.pid = comment.pid")
-    .where("comment.pid = :id", { id: +pid })
-    .getMany();
-    if(commentFlag.length !== 0){
-      ctx.body = '请不要重复评论';
-      return 
-    }
-    const comment = await getConnection()
-    .createQueryBuilder()
-    .insert()
-    .into(Follow)
-    .values(commentObj)
-    .execute();
+    followObj.uid = uid;
+    followObj.followuid = followuid;
+    followObj.followtime = new Date();
 
-    if(comment){
+    const followRepository = getConnection().getRepository(Follow);
+    const follow = await followRepository.insert(followObj);
+
+    if(follow){
       ctx.status = 200; 
       ctx.body = "success";
+    }
+    else {
+      throw new NotFoundException();
+    }
+
+  }
+  //取消关注
+  public static async deleteFollowRelation(ctx: Context) {
+    console.log(ctx.request.body);
+
+    const { uid,followuid} = ctx.request.body;
+
+     const delFol = await getRepository(Follow)
+  .createQueryBuilder("follow")
+  .where("follow.uid = :uid", { uid: uid })
+  .andWhere("follow.followuid = :fid", { fid: followuid })
+  .delete()
+  .execute();
+  
+    if(delFol.affected !== 0){
+      ctx.status = 200; 
+      ctx.body = "delete success";
     }
     else {
       throw new NotFoundException();

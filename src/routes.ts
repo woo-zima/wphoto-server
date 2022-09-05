@@ -21,7 +21,9 @@ unprotectedRouter.get('/photo/getKeyPhotos',PhotoController.getKeyPhotos);
 unprotectedRouter.get('/photo/getUpPhotos',PhotoController.getUpPhotos);
 
 unprotectedRouter.get('/follow/getFollowRelation',FollowController.getFollowRelation);
-unprotectedRouter.get('/follow/addFollowRelation',FollowController.addFollowRelation);
+unprotectedRouter.get('/follow/getFansRelation',FollowController.getFansRelation);
+unprotectedRouter.post('/follow/addFollowRelation',FollowController.addFollowRelation);
+unprotectedRouter.post('/follow/deleteFollowRelation',FollowController.deleteFollowRelation)
 
 unprotectedRouter.get('/photo/showPhotoDetail',PhotoController.showPhotoDetail);
 unprotectedRouter.get('/comment/getPhotoComment',CommentController.getPhotoComment);
