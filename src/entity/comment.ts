@@ -19,7 +19,9 @@ export class Comment {
   @Column()
   pltime: Date;
 
-  @Column()
+  @Column({
+    nullable:true
+  })
   iscross: number;
 
   // @ManyToOne(type => User, user => user.comments)

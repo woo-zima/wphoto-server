@@ -1,9 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Looks {
+export class Likes {
   @PrimaryGeneratedColumn()
-  lookid: number;
+  likeid: number;
 
   @Column()
   uid: number;
@@ -12,6 +12,7 @@ export class Looks {
   pid: number;
 
   @Column()
-  clicktime: Date;
+  liketime: Date;
+  
 
 }

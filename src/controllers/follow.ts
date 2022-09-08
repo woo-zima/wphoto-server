@@ -9,7 +9,7 @@ export default class FollowController {
   //获取关注信息
   public static async getFollowRelation(ctx: Context) {
     const followObj = await getConnection().createQueryBuilder(Follow,"follow")
-    .leftJoinAndMapOne("follow.followuid",User,"u","u.uid = follow.followuid")
+    .leftJoinAndMapOne("follow.uMsg",User,"u","u.uid = follow.followuid")
     .where("follow.uid = :id", { id: +ctx.query.uid })
     .getMany();
     if(followObj){
@@ -24,7 +24,7 @@ export default class FollowController {
    //获取粉丝信息
   public static async getFansRelation(ctx: Context) {
     const followObj = await getConnection().createQueryBuilder(Follow,"follow")
-    .leftJoinAndMapOne  ("follow.uid",User,"u","u.uid = follow.uid")
+    .leftJoinAndMapOne  ("follow.uMsg",User,"u","u.uid = follow.uid")
     .where("follow.followuid = :id", { id: +ctx.query.uid })
     .getMany();
     if(followObj){
@@ -47,12 +47,16 @@ export default class FollowController {
     followObj.followuid = followuid;
     followObj.followtime = new Date();
 
+    if(uid == followuid){
+      ctx.status = 200; 
+      ctx.body = "不能关注自己哦QAQ";
+      return
+    }
     const followRepository = getConnection().getRepository(Follow);
     const follow = await followRepository.insert(followObj);
-
     if(follow){
       ctx.status = 200; 
-      ctx.body = "success";
+      ctx.body = "关注成功QAQ";
     }
     else {
       throw new NotFoundException();
@@ -63,12 +67,11 @@ export default class FollowController {
   public static async deleteFollowRelation(ctx: Context) {
     console.log(ctx.request.body);
 
-    const { uid,followuid} = ctx.request.body;
+    const { gzid} = ctx.request.body;
 
      const delFol = await getRepository(Follow)
   .createQueryBuilder("follow")
-  .where("follow.uid = :uid", { uid: uid })
-  .andWhere("follow.followuid = :fid", { fid: followuid })
+  .where("follow.gzid = :uid", { uid: gzid })
   .delete()
   .execute();
   

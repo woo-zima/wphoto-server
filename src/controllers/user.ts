@@ -14,6 +14,8 @@ export default class UserController {
   }
 
   public static async showUserDetail(ctx: Context) {
+    console.log(ctx.params.id);
+    
     const userRepository = getManager().getRepository(User);
     const user = await userRepository.findOne(+ctx.params.id);
 
