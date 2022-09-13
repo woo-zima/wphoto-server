@@ -4,6 +4,7 @@ import { getManager,getRepository,getConnection  } from 'typeorm';
 
 import { Photo } from '../entity/photo';
 import { NotFoundException, ForbiddenException } from '../exceptions';
+import { Likes } from '../entity/likes';
 
 export default class PhotoController {
   public static async listPhotos(ctx: Context) {
@@ -34,6 +35,7 @@ export default class PhotoController {
   public static async showPhotoDetail(ctx: Context) {
     const photo =  await getConnection().createQueryBuilder(Photo,"photo")
     .leftJoinAndMapOne("photo.user",User, "user", "user.uid = photo.upid")
+    .leftJoinAndMapMany("photo.likes",Likes,"likes","likes.pid = photo.pid")
     .where("photo.pid = :id", { id: +ctx.query.pid })
     .getOne();
 

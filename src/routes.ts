@@ -14,12 +14,15 @@ const unprotectedRouter = new Router();
 // auth 相关的路由
 unprotectedRouter.post('/auth/login', AuthController.login);
 unprotectedRouter.post('/auth/register', AuthController.register);
+//qiniu
+unprotectedRouter.get('/getToken',getToken);
+//photo
 unprotectedRouter.post('/photo/getPhotoList',PhotoController.listPhotos);
 unprotectedRouter.post('/photo/addPhoto',PhotoController.addPhoto);
-unprotectedRouter.get('/getToken',getToken);
 unprotectedRouter.get('/photo/getKeyWorlds',PhotoController.getKeyWorlds);
 unprotectedRouter.get('/photo/getKeyPhotos',PhotoController.getKeyPhotos);
 unprotectedRouter.get('/photo/getUpPhotos',PhotoController.getUpPhotos);
+unprotectedRouter.get('/photo/showPhotoDetail',PhotoController.showPhotoDetail);
 //关注
 unprotectedRouter.get('/follow/getFollowRelation',FollowController.getFollowRelation);
 unprotectedRouter.get('/follow/getFansRelation',FollowController.getFansRelation);
@@ -27,8 +30,11 @@ unprotectedRouter.post('/follow/addFollowRelation',FollowController.addFollowRel
 unprotectedRouter.post('/follow/deleteFollowRelation',FollowController.deleteFollowRelation)
 //like
 unprotectedRouter.get('/like/getLikesByUid',LikeController.getLikesByUid)
+unprotectedRouter.post('/like/addLikeById',LikeController.addLike)
+unprotectedRouter.post('/like/cancelLike',LikeController.cancelLike)
+unprotectedRouter.get('/like/getLikeByid',LikeController.getLikeByid)
 
-unprotectedRouter.get('/photo/showPhotoDetail',PhotoController.showPhotoDetail);
+//comment
 unprotectedRouter.get('/comment/getPhotoComment',CommentController.getPhotoComment);
 unprotectedRouter.post('/comment/addComment',CommentController.addCommentById);
 
