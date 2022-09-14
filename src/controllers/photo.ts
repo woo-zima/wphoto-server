@@ -91,15 +91,22 @@ export default class PhotoController {
   }
 
   public static async getKeyPhotos(ctx: Context) {
-    const selectvalue = ctx.query.queryValue;
-    console.log(selectvalue  );
-    
-    const photoK = await getRepository(Photo)
-  .createQueryBuilder("photo")
-  .select(["photo"])
-  .where('photo.pdescribe LIKE "'+selectvalue+'%"')
-  .getMany()
+    const { pageNum,pageSize,queryValue} = ctx.query;
 
+    const photoKRepository = await getRepository(Photo).createQueryBuilder("photo")
+    let photoK;
+    if(+pageNum == 1){
+      photoK = await photoKRepository.select(["photo"])
+      .where('photo.pdescribe LIKE "'+queryValue+'%"')
+      .take(+pageNum * 16)
+      .getMany()
+   }else{
+    photoK = await photoKRepository.select(["photo"])
+      .where('photo.pdescribe LIKE "'+queryValue+'%"')
+      .skip((+pageNum - 1) * +pageSize)
+      .take(+pageNum * +pageSize)
+      .getMany()
+   }
     if (photoK) {
       ctx.status = 200;
       ctx.body = photoK;

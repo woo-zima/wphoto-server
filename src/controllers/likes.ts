@@ -9,11 +9,23 @@ import { NotFoundException } from '../exceptions';
 export default class LikeController {
   //获取喜欢页数据
   public static async getLikesByUid(ctx: Context) {
-    console.log(ctx.query.uid);
-    const likeObj = await getConnection().createQueryBuilder(Likes,"like")
-    .leftJoinAndMapOne("like.photoMsg",Photo,"photo","photo.pid = like.pid")
-    .where("like.uid = :id", { id: +ctx.query.uid })
-    .getMany();
+    const { pageNum,pageSize} = ctx.query;
+    const photoRepository = getConnection().createQueryBuilder(Likes,"like")
+
+    let likeObj;
+    if(+pageNum == 1){
+      likeObj = await photoRepository.leftJoinAndMapOne("like.photoMsg",Photo,"photo","photo.pid = like.pid")
+      .where("like.uid = :id", { id: +ctx.query.uid })
+      .take(+pageNum * 16)
+      .getMany();
+    }else{
+      likeObj = await photoRepository.leftJoinAndMapOne("like.photoMsg",Photo,"photo","photo.pid = like.pid")
+      .where("like.uid = :id", { id: +ctx.query.uid })
+      .skip((+pageNum - 1) * +pageSize)
+      .take(+pageNum * +pageSize)
+      .getMany();
+    }
+    
     if(likeObj){
       ctx.status = 200; 
       ctx.body = likeObj;

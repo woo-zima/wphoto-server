@@ -14,8 +14,7 @@ const unprotectedRouter = new Router();
 // auth 相关的路由
 unprotectedRouter.post('/auth/login', AuthController.login);
 unprotectedRouter.post('/auth/register', AuthController.register);
-//qiniu
-unprotectedRouter.get('/getToken',getToken);
+
 //photo
 unprotectedRouter.post('/photo/getPhotoList',PhotoController.listPhotos);
 unprotectedRouter.post('/photo/addPhoto',PhotoController.addPhoto);
@@ -44,7 +43,11 @@ unprotectedRouter.get('/users/:id', UserController.showUserDetail);
 //captcha
 unprotectedRouter.get('/getCaptcha/:id',captchaController.getCaptcha);
 
+//需要jwt验证的
 const protectedRouter = new Router();
+//qiniu
+protectedRouter.get('/getToken',getToken);
+
 
 // users 相关的路由
 protectedRouter.get('/users', UserController.listUsers);
