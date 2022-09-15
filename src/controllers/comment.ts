@@ -12,6 +12,7 @@ export default class PhotoController {
     .leftJoinAndMapOne("comment.user",User, "user", "user.uid = comment.uid")
     .leftJoinAndMapOne  ("comment.photo",Photo,"photo","photo.pid = comment.pid")
     .where("comment.pid = :id", { id: +ctx.query.pid })
+    .orderBy("comment.plid", "DESC")
     .getMany();
     if(comment){
       ctx.status = 200; 
@@ -30,10 +31,11 @@ export default class PhotoController {
     const { uid,pid,content} = ctx.request.body;
 
     const commentFlag = await getConnection().createQueryBuilder(Comment,"comment")
-    .leftJoinAndMapOne("comment.user",User, "user", "user.uid = comment.uid")
-    .leftJoinAndMapOne  ("comment.photo",Photo,"photo","photo.pid = comment.pid")
     .where("comment.pid = :id", { id: +pid })
+    .andWhere("comment.uid = :uid",{uid: +uid})
     .getMany();
+    // console.log(commentFlag);
+    
     if(commentFlag.length !== 0){
       ctx.body = '请不要重复评论';
       return 

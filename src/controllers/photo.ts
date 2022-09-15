@@ -14,13 +14,16 @@ export default class PhotoController {
     let users;
     if(+startIndex == 1){
        users = await photoRepository
-    .take(+startIndex * 16).getMany();
-
+    .take(+startIndex * 16)
+    .orderBy("photo.pid", "DESC")
+    .getMany();
     }
     else{
      users = await photoRepository
     .skip((+startIndex - 1) * +pageSize)
-    .take(+startIndex * +pageSize).getMany();
+    .take(+startIndex * +pageSize)
+    .orderBy("photo.pid", "DESC")
+    .getMany();
     }
     if(users){
       ctx.status = 200; 
@@ -117,12 +120,11 @@ export default class PhotoController {
   
   public static async getUpPhotos(ctx: Context) {
     const selectvalue = ctx.query.upid;
-    console.log("selectvalue" ,selectvalue );
-    
     const photoK = await getRepository(Photo)
   .createQueryBuilder("photo")
   .select(["photo"])
   .where('photo.upid = :upid',{upid:selectvalue})
+  .orderBy("photo.pid", "DESC")
   .getMany()
 
     if (photoK) {

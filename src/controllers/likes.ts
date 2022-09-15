@@ -17,12 +17,14 @@ export default class LikeController {
       likeObj = await photoRepository.leftJoinAndMapOne("like.photoMsg",Photo,"photo","photo.pid = like.pid")
       .where("like.uid = :id", { id: +ctx.query.uid })
       .take(+pageNum * 16)
+      .orderBy("like.likeid", "DESC")
       .getMany();
     }else{
       likeObj = await photoRepository.leftJoinAndMapOne("like.photoMsg",Photo,"photo","photo.pid = like.pid")
       .where("like.uid = :id", { id: +ctx.query.uid })
       .skip((+pageNum - 1) * +pageSize)
       .take(+pageNum * +pageSize)
+      .orderBy("like.likeid", "DESC")
       .getMany();
     }
     

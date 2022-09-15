@@ -17,7 +17,6 @@ unprotectedRouter.post('/auth/register', AuthController.register);
 
 //photo
 unprotectedRouter.post('/photo/getPhotoList',PhotoController.listPhotos);
-unprotectedRouter.post('/photo/addPhoto',PhotoController.addPhoto);
 unprotectedRouter.get('/photo/getKeyWorlds',PhotoController.getKeyWorlds);
 unprotectedRouter.get('/photo/getKeyPhotos',PhotoController.getKeyPhotos);
 unprotectedRouter.get('/photo/getUpPhotos',PhotoController.getUpPhotos);
@@ -47,6 +46,9 @@ unprotectedRouter.get('/getCaptcha/:id',captchaController.getCaptcha);
 const protectedRouter = new Router();
 //qiniu
 protectedRouter.get('/getToken',getToken);
+
+//photo
+protectedRouter.post('/photo/addPhoto',PhotoController.addPhoto);
 
 
 // users 相关的路由
