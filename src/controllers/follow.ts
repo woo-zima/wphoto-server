@@ -65,10 +65,7 @@ export default class FollowController {
   }
   //取消关注
   public static async deleteFollowRelation(ctx: Context) {
-    console.log(ctx.request.body);
-
     const { gzid} = ctx.request.body;
-
      const delFol = await getRepository(Follow)
   .createQueryBuilder("follow")
   .where("follow.gzid = :uid", { uid: gzid })
@@ -77,13 +74,31 @@ export default class FollowController {
   
     if(delFol.affected !== 0){
       ctx.status = 200; 
-      ctx.body = "delete success";
+      ctx.body = "取关成功QAQ";
     }
     else {
       throw new NotFoundException();
     }
 
   }
+  public static async deleteFollowRelationByIds(ctx: Context) {
+    const { followId , followedId} = ctx.request.body;
 
+     const delFol = await getRepository(Follow)
+  .createQueryBuilder("follow")
+  .where("follow.uid = :uid", { uid: followId })
+  .andWhere("follow.followuid = :fuid",{fuid:followedId})  
+  .delete()
+  .execute();
+  
+    if(delFol.affected !== 0){
+      ctx.status = 200; 
+      ctx.body = "取关成功QAQ";
+    }
+    else {
+      throw new NotFoundException();
+    }
+
+  }
 
 }

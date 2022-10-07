@@ -26,6 +26,7 @@ unprotectedRouter.get('/follow/getFollowRelation',FollowController.getFollowRela
 unprotectedRouter.get('/follow/getFansRelation',FollowController.getFansRelation);
 unprotectedRouter.post('/follow/addFollowRelation',FollowController.addFollowRelation);
 unprotectedRouter.post('/follow/deleteFollowRelation',FollowController.deleteFollowRelation)
+unprotectedRouter.post('/follow/deleteFollowRelationByIds',FollowController.deleteFollowRelationByIds)
 //like
 unprotectedRouter.get('/like/getLikesByUid',LikeController.getLikesByUid)
 unprotectedRouter.post('/like/addLikeById',LikeController.addLike)

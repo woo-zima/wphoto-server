@@ -14,16 +14,15 @@ export default class PhotoController {
     let users;
     if(+startIndex == 1){
        users = await photoRepository
-    .take(+startIndex * 16)
-    .orderBy("photo.pid", "DESC")
-    .getMany();
+
+       .take(+startIndex * 16)
+       .getMany();
     }
     else{
      users = await photoRepository
-    .skip((+startIndex - 1) * +pageSize)
-    .take(+startIndex * +pageSize)
-    .orderBy("photo.pid", "DESC")
-    .getMany();
+     .skip((+startIndex - 1) * +pageSize)
+     .take(+startIndex * +pageSize)
+     .getMany();
     }
     if(users){
       ctx.status = 200; 

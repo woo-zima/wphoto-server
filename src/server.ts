@@ -48,7 +48,7 @@ createConnection()
     app.use(unprotectedRouter.routes()).use(unprotectedRouter.allowedMethods());
 
     // 注册 JWT 中间件
-    app.use(jwt({ secret: JWT_SECRET }).unless({ method: 'GET' }));
+    app.use(jwt({ secret: JWT_SECRET }).unless({ path: [/\/auth\/register/, /\/auth\/login/] }));
 
     // 需要 JWT Token 才可访问
     app.use(protectedRouter.routes()).use(protectedRouter.allowedMethods());
